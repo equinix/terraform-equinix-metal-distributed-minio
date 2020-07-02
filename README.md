@@ -36,30 +36,40 @@ terraform apply --auto-approve
 ```
 Once this is complete you should get output similar to this:
 ```
-Apply complete! Resources: 3 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 10 added, 0 changed, 0 destroyed.
 
 Outputs:
 
-minio_access_key = 0AFX2zKYxsmQuHrHsdPx
-minio_access_secret = ieYiYqQDB3zVxpCQxqTHJbFIENbauZVjP71DntRF
-minio_endpoint = http://147.75.49.9:9000
-minio_public_bucket_name = public
+minio_access_key = Xe245QheQ7Nwi20dxsuF
+minio_access_secret = 9g4LKJlXqpe7Us4MIwTPluNyTUJv4A5T9xVwwcZh
+minio_endpoints = [
+  "node1 minio endpoint is http://147.75.65.29:9000",
+  "node2 minio endpoint is http://147.75.39.227:9000",
+  "node3 minio endpoint is http://147.75.66.53:9000",
+  "node4 minio endpoint is http://147.75.194.101:9000",
+]
 minio_region_name = us-east-1
 ```
 
 ## Sample S3 Upload
-In order to use this Minio to upload objects via Terraform, to a ***public*** bucket on Minio. You will need to create a bucket (`public` is the name of the bucket in this example) and use code that looks like this:
+In order to use this Minio to upload objects via Terraform, to a ***public*** bucket on Minio, you will need to create a bucket (`public` is the name of the bucket in this example). To create the bucket login to one of the minio servers through SSH and run the following. The command to add a host to the minio client is in the format of `mc config host add $ALIAS $MINIO_ENDPOINT $MINIO_ACCESS_KEY $MINIO_SECRET_KEY`. You can also add the following as part of the automation in the terraform script.
+
+mc config host add minio http://127.0.0.1:9000 Xe245QheQ7Nwi20dxsuF 9g4LKJlXqpe7Us4MIwTPluNyTUJv4A5T9xVwwcZh
+mc mb minio/public
+mc policy set public minio/public
+
+To upload files through terraform you can add the following code to the main.tf file:
 ```
 provider "aws" {
     region = "us-east-1"
-    access_key = "0AFX2zKYxsmQuHrHsdPx"
-    secret_key = "ieYiYqQDB3zVxpCQxqTHJbFIENbauZVjP71DntRF"
+    access_key = "Xe245QheQ7Nwi20dxsuF"
+    secret_key = "9g4LKJlXqpe7Us4MIwTPluNyTUJv4A5T9xVwwcZh"
     skip_credentials_validation = true
     skip_metadata_api_check = true
     skip_requesting_account_id = true
     s3_force_path_style = true
     endpoints {
-        s3 = "http://147.75.49.9:9000"
+        s3 = "http://147.75.65.29:9000"
     }   
 }
 
@@ -70,4 +80,7 @@ resource "aws_s3_bucket_object" "object" {
     etag = filemd5("path/to/my_file_name.txt")
 }
 ```
-Enjoy!
+
+## Load Balancing your Minio cluster
+
+It is recommended to load balance the traffic to your minion server endpoints through a single endpoint. This can be done through a DNS record that points to your minio servers or you could even utilize a Packet Elastic IP and announce it through BGP on all the minio servers to achieve ECMP load balancing.
