@@ -1,5 +1,56 @@
 #!/bin/bash
-yum install -y xfsprogs parted
+
+# Detect Operating System
+function dist-check() {
+  # shellcheck disable=SC1090
+  if [ -e /etc/os-release ]; then
+    # shellcheck disable=SC1091
+    source /etc/os-release
+    DISTRO=$ID
+    # shellcheck disable=SC2034
+    DISTRO_VERSION=$VERSION_ID
+  fi
+}
+
+# Check Operating System
+dist-check
+
+# Install pre-requisites (parted and filesystem packages)
+  function install-prerequisites() {
+    # Installation begins here
+    # shellcheck disable=SC2235
+    if [ "$DISTRO" == "ubuntu" ]; then
+      apt-get update
+      apt-get install parted xfsprogs -y
+    fi
+    # shellcheck disable=SC2235
+    if [ "$DISTRO" == "debian" ]; then
+      apt-get update
+      apt-get install parted xfsprogs -y
+    fi
+    if [ "$DISTRO" == "raspbian" ]; then
+      apt-get update
+      apt-get install parted xfsprogs -y
+    fi
+    if [ "$DISTRO" == "arch" ]; then
+      pacman -Syu
+      pacman -Syu --noconfirm parted xfsprogs
+    fi
+    if [ "$DISTRO" = "fedora" ]; then
+      dnf update -y
+      dnf install parted xfsprogs -y
+    fi
+    # shellcheck disable=SC2235
+    if [ "$DISTRO" == "centos" ]; then
+      yum install parted xfsprogs -y
+    fi
+    if [ "$DISTRO" == "rhel" ]; then
+      yum install parted xfsprogs -y
+    fi
+  }
+
+  # Install prerequisites
+  install-prerequisites
 
 root_disk=`df -h | sort -k 6 | head -1 | cut -c1-8`
 
