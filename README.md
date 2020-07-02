@@ -54,9 +54,11 @@ minio_region_name = us-east-1
 ## Sample S3 Upload
 In order to use this Minio to upload objects via Terraform, to a ***public*** bucket on Minio, you will need to create a bucket (`public` is the name of the bucket in this example). To create the bucket login to one of the minio servers through SSH and run the following. The command to add a host to the minio client is in the format of `mc config host add $ALIAS $MINIO_ENDPOINT $MINIO_ACCESS_KEY $MINIO_SECRET_KEY`. You can also add the following as part of the automation in the terraform script.
 
+```
 mc config host add minio http://127.0.0.1:9000 Xe245QheQ7Nwi20dxsuF 9g4LKJlXqpe7Us4MIwTPluNyTUJv4A5T9xVwwcZh
 mc mb minio/public
 mc policy set public minio/public
+```
 
 To upload files through terraform you can add the following code to the main.tf file:
 ```
