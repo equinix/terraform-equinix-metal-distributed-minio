@@ -39,7 +39,7 @@ resource "packet_device" "minio-distributed-cluster" {
 }
 
 # Bash command to populate /etc/hosts file on each instances
-resource "null_resource" "provision_cluster_member_hosts_file" {
+resource "null_resource" "setup_minio_distributed" {
   count = var.node_amount
 
   # Changes to any instance of the cluster requires re-provisioning
@@ -60,7 +60,7 @@ resource "null_resource" "provision_cluster_member_hosts_file" {
 
   provisioner "remote-exec" {
     inline = [
-      # Adds all cluster members' IP addresses to /etc/hosts (on each member)
+      # Adds all cluster members' IP addresses to /etc/hosts (on each member), sets up drives, and starts minio distributed
       "echo '${join("\n", formatlist("%v", packet_device.minio-distributed-cluster.*.access_public_ipv4))}' | awk 'BEGIN{ print \"\\n\\n# Minio Distributed Cluster members:\" }; { print $0 \" ${var.hostname}\" NR }' | sudo tee -a /etc/hosts > /dev/null",
       "chmod +x /tmp/setup-minio-distributed.sh",
       "/tmp/setup-minio-distributed.sh"
