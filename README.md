@@ -33,8 +33,11 @@ lsblk -d -o name,size,model,rota
 ```
 
 Example: storage_drive_model = "HGST HUS728T8TAL"
+
 To specify multiple drive models to be used for Minio, the string should be in this format: "DRIVE_MODEL_1\|DRIVE_MODEL_2" where each model name is separated by \|
+
 Example: storage_drive_model = "HGST_HUS728T8TAL\|Micron_5200_MTFD"
+
 Leaving the string empty (storage_drive_model = "") will make the script use any drive model
 
 
