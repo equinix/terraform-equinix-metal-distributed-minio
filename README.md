@@ -32,13 +32,13 @@ In the `terraform.tfvars` file you will need to add your Packet API token next t
 lsblk -d -o name,size,model,rota
 ```
 
-Example: storage_drive_model = "HGST HUS728T8TAL"
+Example: `storage_drive_model = "HGST HUS728T8TAL"`
 
-To specify multiple drive models to be used for Minio, the string should be in this format: "DRIVE_MODEL_1\|DRIVE_MODEL_2" where each model name is separated by \|
+To specify multiple drive models to be used for Minio, the string should be in this format: "DRIVE_MODEL_1\|DRIVE_MODEL_2" where each model name is separated by `\|`
 
-Example: storage_drive_model = "HGST_HUS728T8TAL\|Micron_5200_MTFD"
+Example: `storage_drive_model = "HGST_HUS728T8TAL\|Micron_5200_MTFD"`
 
-Leaving the string empty (storage_drive_model = "") will make the script use any drive model
+Leaving the string empty (`storage_drive_model = ""`) will make the script use any drive model
 
 
 If you wish to modify the filesystem to be used along with the parent path of the directories where the drives will be mounted, you can do so in the `user_data.sh` bash script in the /templates folder in this repository. The relevant bash variables are `DATA_BASE` for the parent directory path and `FILESYSTEM_TYPE` for the filesystem you wish to use.
