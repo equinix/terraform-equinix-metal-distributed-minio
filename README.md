@@ -26,7 +26,7 @@ cd packet-distributed-minio
 Terraform uses modules to deploy infrastructure. In order to initialize the modules your simply run: `terraform init`. This should download modules into a hidden directory `.terraform` 
  
 ## Modify your variables 
-In the `terraform.tfvars` file you will need to add your Packet API token next to `auth_token` and Packet Project ID next to `project_id` variables in order to deploy the Minio cluster. You can also modify other variables such as the instance type, datacenter location, operating system, and a specific drive model that you wish to use for Minio as it is recommended to use homogeneous drives and servers. To find the drive models in the instance type, deploy a single instance and run the following command which will list all the drives along with the model name if they are spinning disks.
+In the `terraform.tfvars` file you will need to add your Packet API token next to `auth_token` and Packet Project ID next to `project_id` variables in order to deploy the Minio cluster. You can also modify other variables such as the instance type, datacenter location, operating system, and a specific drive model that you wish to use for Minio as it is recommended to use homogeneous drives and servers. Specifying a drive model is not required for the script to run and if you leave the string empty, the script will use any/all drives in the server but this is not recommended. To find the drive models in the instance type, deploy a single instance and run the following command which will list all the drives along with the model name if they are spinning disks.
 
 ```
 lsblk -d -o name,size,model,rota
