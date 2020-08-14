@@ -26,27 +26,27 @@ cd packet-distributed-minio
 Terraform uses modules to deploy infrastructure. In order to initialize the modules your simply run: `terraform init`. This should download modules into a hidden directory `.terraform` 
  
 ## Modify your variables 
-We've added *.tfvars to the .gitignore file but you can copy the template with:
+We've added .tfvars to the .gitignore file but you can copy the template with:
 
-*`cp vars.template terraform.tfvars`
+`cp vars.template terraform.tfvars`
 
 In the `terraform.tfvars` file you will need to modify the following variables:
 
-..*`auth_token` - This is your Packet API Key.
-..*`project_id` - This is your Packet Project ID.
-..*`ssh_private_key_path` - Path to your private SSH key for accessing servers you deploy on Packet.
+..* `auth_token` - This is your Packet API Key.
+..* `project_id` - This is your Packet Project ID.
+..* `ssh_private_key_path` - Path to your private SSH key for accessing servers you deploy on Packet.
 
 [Learn about Packet API Keys and Project IDs](https://www.packet.com/developers/docs/api/)
 
 Optional variables are:
 
-..*`plan` - We're using **s3.xlarge.x86** servers by default.
-..*`operating_system` - This install is verified for **Ubuntu 20.04**.
-..*`facility` - Where would you like these servers deployed, we're using **DC13**.
-..*`cluster_size` - How many servers in the cluster? We default to **4**.
-..*`hostname` - Naming scheme for your Minio nodes, default is **minio-storage-node**.
-..*`storage_drive_model` - You'll have to know the storage drive model in advance of your deployment so Minio only uses intended drives (mixing drives is not recommened). We're using **HGST** here since that's the current 8TB drive in the s3.xlarge.x86.
-..*`minio_region_name` - Name for your cluster, default is **us-east-1**.
+..* `plan` - We're using **s3.xlarge.x86** servers by default.
+..* `operating_system` - This install is verified for **Ubuntu 20.04**.
+..* `facility` - Where would you like these servers deployed, we're using **DC13**.
+..* `cluster_size` - How many servers in the cluster? We default to **4**.
+..* `hostname` - Naming scheme for your Minio nodes, default is **minio-storage-node**.
+..* `storage_drive_model` - You'll have to know the storage drive model in advance of your deployment so Minio only uses intended drives (mixing drives is not recommened). We're using **HGST** here since that's the current 8TB drive in the s3.xlarge.x86.
+..* `minio_region_name` - Name for your cluster, default is **us-east-1**.
 
 The following are pretty important when setting up your cluster as they define how performant (particularly when using HDDs) and how protected your data is. You should consider how large the files you are storing are, the smaller the file (eg 1MB and lower), it's likely you would use a lower erasure set size to gain more performance, though this consideration is based on the type of disks you are using.
 ..*`minio_erasure_set_drive_count` - This defines how many drives comprise an erasure set. It should be a multiple of the cluster size. We're going with **8**, which with our default settings means we will have 6 sets of 8 drives.
