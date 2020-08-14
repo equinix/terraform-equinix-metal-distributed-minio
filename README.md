@@ -26,6 +26,10 @@ cd packet-distributed-minio
 Terraform uses modules to deploy infrastructure. In order to initialize the modules your simply run: `terraform init`. This should download modules into a hidden directory `.terraform` 
  
 ## Modify your variables 
+We've added *.tfvars to the .gitignore file but you can copy the template with:
+
+*`cp vars.template terraform.tfvars`
+
 In the `terraform.tfvars` file you will need to modify the following variables:
 
 ..*`auth_token` - This is your Packet API Key.
