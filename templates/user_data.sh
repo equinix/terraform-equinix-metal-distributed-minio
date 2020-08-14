@@ -58,9 +58,6 @@ root_disk=`df -h | sort -k 6 | head -1 | cut -c1-8`
 # This is useful for software defined storage solutions where its best to use homogeneous drives
 # You can view drive models by running: lsblk -d -o name,size,model,rota
 # Example: DRIVE_MODEL="HGST HUS728T8TAL"
-# Specifying multiple drives is also an option when you are using the same server type with slightly revised drive models.
-# To specify multiple drive models to be used for Minio, the string should be in this format: "DRIVE_MODEL_1\|DRIVE_MODEL_2" where each model name is separated by \|
-# Example: DRIVE_MODEL="HGST_HUS728T8TAL\|Micron_5200_MTFD"
 # Leaving the string empty (DRIVE_MODEL="") will make the script use any drive model
 DRIVE_MODEL="${minio_drive_model}"
 
@@ -280,8 +277,9 @@ cat <<EOT > /etc/default/minio
 MINIO_VOLUMES="http://node{1...${minio_node_count}}$${DATA_BASE}/data{1...$${#DISKS[@]}}"
 MINIO_ACCESS_KEY="${minio_access_key}"
 MINIO_SECRET_KEY="${minio_secret_key}"
-MINIO_REGION_NAME="us-east-1"
-
+MINIO_REGION_NAME="${minio_region_name}"
+MINIO_ERASURE_SET_DRIVE_COUNT="${minio_erasure_set_drive_count}"
+MINIO_STORAGE_CLASS_STANDARD="${minio_storage_class_standard}"
 EOT
 
 chown minio-user:minio-user /usr/local/bin/minio
