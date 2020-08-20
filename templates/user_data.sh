@@ -274,13 +274,26 @@ WantedBy=multi-user.target
 EOF
 
 cat <<EOT > /etc/default/minio
-MINIO_VOLUMES="http://node{1...${minio_node_count}}$${DATA_BASE}/data{1...$${#DISKS[@]}}"
+MINIO_VOLUMES="http://${node_hostname}{1...${minio_node_count}}$${DATA_BASE}/data{1...$${#DISKS[@]}}"
 MINIO_ACCESS_KEY="${minio_access_key}"
 MINIO_SECRET_KEY="${minio_secret_key}"
 MINIO_REGION_NAME="${minio_region_name}"
+EOT
+
+
+if [ "${minio_erasure_set_drive_count}" != "default" ]
+then
+cat <<EOT >> /etc/default/minio
 MINIO_ERASURE_SET_DRIVE_COUNT="${minio_erasure_set_drive_count}"
+EOT
+fi
+
+if [ "${minio_storage_class_standard}" != "default" ]
+then
+cat <<EOT >> /etc/default/minio
 MINIO_STORAGE_CLASS_STANDARD="${minio_storage_class_standard}"
 EOT
+fi
 
 chown minio-user:minio-user /usr/local/bin/minio
 chown minio-user:minio-user /etc/default/minio

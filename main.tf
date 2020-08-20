@@ -28,6 +28,7 @@ data "template_file" "user_data" {
         minio_erasure_set_drive_count = var.minio_erasure_set_drive_count
         minio_storage_class_standard = var.minio_storage_class_standard
         minio_region_name = var.minio_region_name
+        node_hostname = var.hostname
    }
 }
 

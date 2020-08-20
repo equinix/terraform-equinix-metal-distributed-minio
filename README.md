@@ -52,7 +52,10 @@ The following are pretty important when setting up your cluster as they define h
 * `minio_erasure_set_drive_count` - This defines how many drives comprise an erasure set. It should be a multiple of the cluster size. We're going with **8**, which with our default settings means we will have 6 sets of 8 drives.
 * `minio_storage_class_standard` - This defines how many parity drives will be used in an erasure set, we're setting this to **EC:2**. With our default settings, that means for 8 drives in an erasue set, 2 will be dedicated to parity.
 
-You can see a specific Packet servers model by deploying an instance with Ubuntu and running:
+
+For both `minio_erasure_set_drive_count` and `minio_storage_class_standard` you can choose to pass `default`. Default favors resiliency, the erasure set will be calculated such that it's a multiple of the number of servers in a cluster and also that it can't be more than 16. Default parity is n/2, or half the number of drives in an erasure set, meaning 50% of the clusters total storage will be dedicated to parity. Again, these are defintely things you will want to consider for yourself based on business and performance goals, and how reselient you want your cluster to be.
+
+To learn what storage driver model a given Packet server is using, you can deploy said instance with Ubuntu and run:
 
 ```
 lsblk -d -o name,size,model,rota
@@ -64,7 +67,7 @@ To view all available plans, facilities, and operating_systems - you can use our
 
 If you wish to modify the filesystem to be used along with the parent path of the directories where the drives will be mounted, you can do so in the `user_data.sh` bash script in the /templates folder in this repository. The relevant bash variables are `DATA_BASE` for the parent directory path and `FILESYSTEM_TYPE` for the filesystem you wish to use.
 
-## Deploy the Minio cluster
+## Deploy the Minio Cluster
 ```bash
 terraform apply --auto-approve
 ```
@@ -84,6 +87,12 @@ minio_endpoints = [
 ]
 minio_region_name = us-east-1
 ```
+
+## Logging in to Minio Cluser
+
+To login and administer your cluster you can navigate to any of the endpoints provided at the end of the Terraform deploy and enter the provided access key and secret.
+
+You can also use the [Minio Client (MC)](https://docs.min.io/docs/minio-client-quickstart-guide.html) which has a ton of functionality.
 
 ## Sample S3 Upload
 In order to use this Minio setup to upload objects via Terraform, to a ***public*** bucket on Minio, you will need to create a bucket (`public` is the name of the bucket in this example). To create the bucket login to one of the minio servers through SSH and run the following. The command to add a host to the minio client is in the format of `mc config host add $ALIAS $MINIO_ENDPOINT $MINIO_ACCESS_KEY $MINIO_SECRET_KEY`. You can also add the following as part of the automation in the terraform script.
