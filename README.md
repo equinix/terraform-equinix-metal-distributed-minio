@@ -36,12 +36,12 @@ In the `terraform.tfvars` file you will need to modify the following variables:
 * `project_id` - This is your Packet Project ID.
 * `ssh_private_key_path` - Path to your private SSH key for accessing servers you deploy on Packet.
 
-[Learn about Packet API Keys and Project IDs](https://www.packet.com/developers/docs/api/)
+[Learn about Packet API Keys and Project IDs](https://www.packet.com/developers/docs/API/)
 
 Optional variables are:
 
 * `plan` - We're using **s3.xlarge.x86** servers by default.
-* `operating_system` - This install is verified for **Ubuntu 20.04**.
+* `operating_system` - Though this does work on other Linux distros like CentOS and Debian, this install is verified for **Ubuntu 20.04** since it performs best.
 * `facility` - Where would you like these servers deployed, we're using **DC13**.
 * `cluster_size` - How many servers in the cluster? We default to **4**.
 * `hostname` - Naming scheme for your Minio nodes, default is **minio-storage-node**.
@@ -80,10 +80,10 @@ Outputs:
 minio_access_key = Xe245QheQ7Nwi20dxsuF
 minio_access_secret = 9g4LKJlXqpe7Us4MIwTPluNyTUJv4A5T9xVwwcZh
 minio_endpoints = [
-  "node1 minio endpoint is http://147.75.65.29:9000",
-  "node2 minio endpoint is http://147.75.39.227:9000",
-  "node3 minio endpoint is http://147.75.66.53:9000",
-  "node4 minio endpoint is http://147.75.194.101:9000",
+  "minio-storage-node1 minio endpoint is http://147.75.65.29:9000",
+  "minio-storage-node2 minio endpoint is http://147.75.39.227:9000",
+  "minio-storage-node3 minio endpoint is http://147.75.66.53:9000",
+  "minio-storage-node4 minio endpoint is http://147.75.194.101:9000",
 ]
 minio_region_name = us-east-1
 ```
@@ -92,7 +92,25 @@ minio_region_name = us-east-1
 
 To login and administer your cluster you can navigate to any of the endpoints provided at the end of the Terraform deploy and enter the provided access key and secret.
 
-You can also use the [Minio Client (MC)](https://docs.min.io/docs/minio-client-quickstart-guide.html) which has a ton of functionality.
+You can also use the [Minio Client (MC)](https://docs.min.io/docs/minio-client-quickstart-guide.html) which has a ton of functionality. Here is a useful command to get some info on your cluster:
+
+```
+mc admin info minio --json | jq .info.backend
+```
+
+Which will get you something like this:
+
+```
+root@minio-storage-node1:~# mc admin info minio --json | jq .info.backend
+{
+  "backendType": "Erasure",
+  "onlineDisks": 48,
+  "rrSCData": 6,
+  "rrSCParity": 2,
+  "standardSCData": 6,
+  "standardSCParity": 2
+}
+```
 
 ## Sample S3 Upload
 In order to use this Minio setup to upload objects via Terraform, to a ***public*** bucket on Minio, you will need to create a bucket (`public` is the name of the bucket in this example). To create the bucket login to one of the minio servers through SSH and run the following. The command to add a host to the minio client is in the format of `mc config host add $ALIAS $MINIO_ENDPOINT $MINIO_ACCESS_KEY $MINIO_SECRET_KEY`. You can also add the following as part of the automation in the terraform script.

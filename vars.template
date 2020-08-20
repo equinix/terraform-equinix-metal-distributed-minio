@@ -1,6 +1,6 @@
 auth_token = ""
 project_id = ""
-ssh_private_key_path = ""
+ssh_private_key_path = "~/.ssh/id_rsa"
 plan = "s3.xlarge.x86"
 operating_system = "ubuntu_20_04"
 facility = "dc13"
