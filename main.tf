@@ -23,24 +23,28 @@ data "template_file" "user_data" {
     vars = {
         minio_access_key = random_string.minio_access_key.result
         minio_secret_key = random_string.minio_secret_key.result
-        minio_node_count = var.node_amount
+        minio_node_count = var.cluster_size
         minio_drive_model = var.storage_drive_model
+        minio_erasure_set_drive_count = var.minio_erasure_set_drive_count
+        minio_storage_class_standard = var.minio_storage_class_standard
+        minio_region_name = var.minio_region_name
+        node_hostname = var.hostname
    }
 }
 
 resource "packet_device" "minio-distributed-cluster" {
-    count = var.node_amount
+    count = var.cluster_size
     project_id = var.project_id
-    hostname = "${format("%s%d",var.hostname, count.index+1)}" 
+    hostname = format("%s%d",var.hostname, count.index+1)
     plan = var.plan
     facilities = [var.facility]
     operating_system = var.operating_system
-    billing_cycle = var.billing_cycle
+    billing_cycle = "hourly"
 }
 
 # Bash command to populate /etc/hosts file on each instances
 resource "null_resource" "setup_minio_distributed" {
-  count = var.node_amount
+  count = var.cluster_size
 
   # Changes to any instance of the cluster requires re-provisioning
   triggers = {
@@ -49,8 +53,8 @@ resource "null_resource" "setup_minio_distributed" {
   connection {
     type = "ssh"
     user = "root"
-    host = "${element(packet_device.minio-distributed-cluster.*.access_public_ipv4, count.index)}"
-    private_key = "${file("~/.ssh/id_rsa")}"
+    host = element(packet_device.minio-distributed-cluster.*.access_public_ipv4, count.index)
+    private_key = file(var.ssh_private_key_path)
   }
 
   provisioner "file" {
@@ -70,7 +74,7 @@ resource "null_resource" "setup_minio_distributed" {
  # provisioner "remote-exec" {
  #   when = "destroy"
  #   inline = [
- #     "head -n -${var.node_amount+3} /etc/hosts > /tmp/tmp_file && mv -f /tmp/tmp_file /etc/hosts"
+ #     "head -n -${var.cluster_size+3} /etc/hosts > /tmp/tmp_file && mv -f /tmp/tmp_file /etc/hosts"
  #   ]
  # }
 }

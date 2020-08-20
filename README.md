@@ -26,26 +26,56 @@ cd packet-distributed-minio
 Terraform uses modules to deploy infrastructure. In order to initialize the modules your simply run: `terraform init`. This should download modules into a hidden directory `.terraform` 
  
 ## Modify your variables 
-In the `terraform.tfvars` file you will need to add your Packet API token next to `auth_token` and Packet Project ID next to `project_id` variables in order to deploy the Minio cluster. You can also modify other variables such as the instance type, datacenter location, operating system, and a specific drive model that you wish to use for Minio as it is recommended to use homogeneous drives and servers. Specifying a drive model is not required for the script to run and if you leave the string empty, the script will use any/all drives in the server but this is not recommended. To find the drive models in the instance type, deploy a single instance and run the following command which will list all the drives along with the model name if they are spinning disks.
+We've added .tfvars to the .gitignore file but you can copy the template with:
+
+`cp vars.template terraform.tfvars`
+
+In the `terraform.tfvars` file you will need to modify the following variables:
+
+* `auth_token` - This is your Packet API Key.
+* `project_id` - This is your Packet Project ID.
+* `ssh_private_key_path` - Path to your private SSH key for accessing servers you deploy on Packet.
+
+[Learn about Packet API Keys and Project IDs](https://www.packet.com/developers/docs/API/)
+
+Optional variables are:
+
+* `plan` - We're using **s3.xlarge.x86** servers by default.
+* `operating_system` - Though this does work on other Linux distros like CentOS and Debian, this install is verified for **Ubuntu 20.04** since it performs best.
+* `facility` - Where would you like these servers deployed, we're using **DC13**.
+* `cluster_size` - How many servers in the cluster? We default to **4**.
+* `hostname` - Naming scheme for your Minio nodes, default is **minio-storage-node**.
+* `storage_drive_model` - You'll have to know the storage drive model in advance of your deployment so Minio only uses intended drives (mixing drives is not recommened). We're using **HGST** here since that's the current 8TB drive in the s3.xlarge.x86.
+* `minio_region_name` - Name for your cluster, default is **us-east-1**.
+
+The following are pretty important when setting up your cluster as they define how performant (particularly when using HDDs) and how protected your data is. You should consider how large the files you are storing are, the smaller the file (eg 1MB and lower), it's likely you would use a lower erasure set size to gain more performance, though this consideration is based on the type of disks you are using.
+* `minio_erasure_set_drive_count` - This defines how many drives comprise an erasure set. It should be a multiple of the cluster size. We're going with **8**, which with our default settings means we will have 6 sets of 8 drives.
+* `minio_storage_class_standard` - This defines how many parity drives will be used in an erasure set, we're setting this to **EC:2**. With our default settings, that means for 8 drives in an erasue set, 2 will be dedicated to parity.
+
+
+For both `minio_erasure_set_drive_count` and `minio_storage_class_standard` you can choose to pass `default`. Default favors resiliency, the erasure set will be calculated such that it's a multiple of the number of servers in a cluster and also that it can't be more than 16. Default parity is n/2, or half the number of drives in an erasure set, meaning 50% of the clusters total storage will be dedicated to parity. Again, these are defintely things you will want to consider for yourself based on business and performance goals, and how reselient you want your cluster to be.
+
+To learn what storage drive model a given Packet server instance is using, you can deploy said instance with a Linux distribution such as Ubuntu, Debian, or CentOS and run:
 
 ```
 lsblk -d -o name,size,model,rota
 ```
 
-Example: `storage_drive_model = "HGST HUS728T8TAL"`
+Specifying multiple drives is also an option when you are using the same server type with slightly revised drive models. To specify multiple drive models for Minio to use, you can pass: `DRIVE_MODEL_1\|DRIVE_MODEL_2` where each model name is separated by \|. For example:
 
-Specifying multiple drives is also an option when you are using the same server type with slightly revised drive models.
+```
+DRIVE_MODEL="HGST_HUS728T8TAL\|Micron_5200_MTFD"
+```
 
-To specify multiple drive models to be used for Minio, the string should be in this format: `"DRIVE_MODEL_1\|DRIVE_MODEL_2"` where each model name is separated by `\|`
+Also, leaving the string empty (DRIVE_MODEL="") will make the script use any drive model. Not recommended.
 
-Example: `storage_drive_model = "HGST_HUS728T8TAL\|Micron_5200_MTFD"`
+Or you can contact the support team at support.packet.com.
 
-Leaving the string empty (`storage_drive_model = ""`) will make the script use any drive model
-
+To view all available plans, facilities, and operating_systems - you can use our [Packet CLI](https://github.com/packethost/packet-cli) or make a call to the respective API endpoints directly. [API Docs](https://www.packet.com/developers/api/).
 
 If you wish to modify the filesystem to be used along with the parent path of the directories where the drives will be mounted, you can do so in the `user_data.sh` bash script in the /templates folder in this repository. The relevant bash variables are `DATA_BASE` for the parent directory path and `FILESYSTEM_TYPE` for the filesystem you wish to use.
 
-## Deploy the Minio cluster
+## Deploy the Minio Cluster
 ```bash
 terraform apply --auto-approve
 ```
@@ -58,16 +88,40 @@ Outputs:
 minio_access_key = Xe245QheQ7Nwi20dxsuF
 minio_access_secret = 9g4LKJlXqpe7Us4MIwTPluNyTUJv4A5T9xVwwcZh
 minio_endpoints = [
-  "node1 minio endpoint is http://147.75.65.29:9000",
-  "node2 minio endpoint is http://147.75.39.227:9000",
-  "node3 minio endpoint is http://147.75.66.53:9000",
-  "node4 minio endpoint is http://147.75.194.101:9000",
+  "minio-storage-node1 minio endpoint is http://147.75.65.29:9000",
+  "minio-storage-node2 minio endpoint is http://147.75.39.227:9000",
+  "minio-storage-node3 minio endpoint is http://147.75.66.53:9000",
+  "minio-storage-node4 minio endpoint is http://147.75.194.101:9000",
 ]
 minio_region_name = us-east-1
 ```
 
+## Logging in to Minio Cluser
+
+To login and administer your cluster you can navigate to any of the endpoints provided at the end of the Terraform deploy and enter the provided access key and secret.
+
+You can also use the [Minio Client (MC)](https://docs.min.io/docs/minio-client-quickstart-guide.html) which has a ton of functionality. Here is a useful command to get some info on your cluster:
+
+```
+mc admin info minio --json | jq .info.backend
+```
+
+Which will get you something like this:
+
+```
+root@minio-storage-node1:~# mc admin info minio --json | jq .info.backend
+{
+  "backendType": "Erasure",
+  "onlineDisks": 48,
+  "rrSCData": 6,
+  "rrSCParity": 2,
+  "standardSCData": 6,
+  "standardSCParity": 2
+}
+```
+
 ## Sample S3 Upload
-In order to use this Minio to upload objects via Terraform, to a ***public*** bucket on Minio, you will need to create a bucket (`public` is the name of the bucket in this example). To create the bucket login to one of the minio servers through SSH and run the following. The command to add a host to the minio client is in the format of `mc config host add $ALIAS $MINIO_ENDPOINT $MINIO_ACCESS_KEY $MINIO_SECRET_KEY`. You can also add the following as part of the automation in the terraform script.
+In order to use this Minio setup to upload objects via Terraform, to a ***public*** bucket on Minio, you will need to create a bucket (`public` is the name of the bucket in this example). To create the bucket login to one of the minio servers through SSH and run the following. The command to add a host to the minio client is in the format of `mc config host add $ALIAS $MINIO_ENDPOINT $MINIO_ACCESS_KEY $MINIO_SECRET_KEY`. You can also add the following as part of the automation in the terraform script.
 
 ```
 mc config host add minio http://127.0.0.1:9000 Xe245QheQ7Nwi20dxsuF 9g4LKJlXqpe7Us4MIwTPluNyTUJv4A5T9xVwwcZh
@@ -97,6 +151,9 @@ resource "aws_s3_bucket_object" "object" {
     etag = filemd5("path/to/my_file_name.txt")
 }
 ```
+
+We're using the AWS Terraform Provider here since Minio is an S3 compliant storage solution.
+
 
 ## Load Balancing your Minio cluster
 
