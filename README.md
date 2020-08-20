@@ -1,4 +1,4 @@
-# packet-distributed-minio
+# terraform-packet-distributed-minio
 
 # Minio Distributed on Packet with Terraform
 packet-distributed-minio is a [Terraform](http://terraform.io) template that will deploy [Minio](http://min.io) distributed on [Packet](http://packet.com) baremetal. MinIO is a high performance object storage server compatible with Amazon S3. Minio is a great option for Packet users that want to have easily accessible S3 compatible object storage as Packet offers instance types with storage options including SATA SSDs, NVMe SSDs, and high capacity SATA HDDs.
@@ -18,7 +18,7 @@ sudo mv terraform /usr/local/bin/
 To download this project, run the following command:
 
 ```bash
-git clone https://github.com/enkelprifti98/packet-distributed-minio.git
+git clone https://github.com/enkelprifti98/terraform-packet-distributed-minio.git
 cd packet-distributed-minio
 ```
 
