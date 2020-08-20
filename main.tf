@@ -19,7 +19,7 @@ resource "random_string" "minio_secret_key" {
 }
 
 data "template_file" "user_data" { 
-    template = file("${path.module}/templates/user_data.sh")
+    template = file("${path.module}/assets/user_data.sh")
     vars = {
         minio_access_key = random_string.minio_access_key.result
         minio_secret_key = random_string.minio_secret_key.result
