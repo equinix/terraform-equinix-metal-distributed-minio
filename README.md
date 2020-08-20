@@ -55,11 +55,19 @@ The following are pretty important when setting up your cluster as they define h
 
 For both `minio_erasure_set_drive_count` and `minio_storage_class_standard` you can choose to pass `default`. Default favors resiliency, the erasure set will be calculated such that it's a multiple of the number of servers in a cluster and also that it can't be more than 16. Default parity is n/2, or half the number of drives in an erasure set, meaning 50% of the clusters total storage will be dedicated to parity. Again, these are defintely things you will want to consider for yourself based on business and performance goals, and how reselient you want your cluster to be.
 
-To learn what storage driver model a given Packet server is using, you can deploy said instance with Ubuntu and run:
+To learn what storage drive model a given Packet server instance is using, you can deploy said instance with a Linux distribution such as Ubuntu, Debian, or CentOS and run:
 
 ```
 lsblk -d -o name,size,model,rota
 ```
+
+Specifying multiple drives is also an option when you are using the same server type with slightly revised drive models. To specify multiple drive models for Minio to use, you can pass: `DRIVE_MODEL_1\|DRIVE_MODEL_2` where each model name is separated by \|. For example:
+
+```
+DRIVE_MODEL="HGST_HUS728T8TAL\|Micron_5200_MTFD"
+```
+
+Also, leaving the string empty (DRIVE_MODEL="") will make the script use any drive model. Not recommended.
 
 Or you can contact the support team at support.packet.com.
 
