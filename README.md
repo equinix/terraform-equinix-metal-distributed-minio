@@ -96,11 +96,11 @@ minio_endpoints = [
 minio_region_name = us-east-1
 ```
 
-## Logging in to Minio Cluser
+## Logging in to the Minio Cluser
 
-To login and administer your cluster you can navigate to any of the endpoints provided at the end of the Terraform deploy and enter the provided access key and secret.
+To login and administer your cluster through the web UI, you can navigate to any of the endpoints provided at the end of the Terraform deploy in your web browser and enter the provided access key and secret.
 
-You can also use the [Minio Client (MC)](https://docs.min.io/docs/minio-client-quickstart-guide.html) which has a ton of functionality. To connect the minio client with any of your hosts, log in to any of the minio nodes through ssh and run the following command which is in the format of:
+You can also use the CLI [Minio Client (MC)](https://docs.min.io/docs/minio-client-quickstart-guide.html) which has a ton of functionality. To connect the minio client with any of your hosts, log in to any of the minio nodes through ssh and run the following command which is in the format of:
 
 ```
 mc config host add $ALIAS $MINIO_ENDPOINT $MINIO_ACCESS_KEY $MINIO_SECRET_KEY
