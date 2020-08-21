@@ -61,7 +61,7 @@ To learn what storage drive model a given Packet server instance is using, you c
 lsblk -d -o name,size,model,rota
 ```
 
-Specifying multiple drives is also an option when you are using the same server type with slightly revised drive models. To specify multiple drive models for Minio to use, you can pass: `DRIVE_MODEL_1\|DRIVE_MODEL_2` where each model name is separated by \|. For example:
+Specifying multiple drives is also an option when you are using the same server type with slightly revised drive models. To specify multiple drive models for Minio to use, you can pass: `DRIVE_MODEL_1\|DRIVE_MODEL_2` where each drive model name is separated by `\|`. For example:
 
 ```
 DRIVE_MODEL="HGST_HUS728T8TAL\|Micron_5200_MTFD"
