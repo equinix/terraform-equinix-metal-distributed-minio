@@ -40,17 +40,17 @@ In the `terraform.tfvars` file you will need to modify the following variables:
 
 Optional variables are:
 
-* `plan` - We're using **s3.xlarge.x86** servers by default.
-* `operating_system` - Though this does work on other Linux distros like CentOS and Debian, this install is verified for **Ubuntu 20.04** since it performs best.
-* `facility` - Where would you like these servers deployed, we're using **DC13**.
-* `cluster_size` - How many servers in the cluster? We default to **4**.
-* `hostname` - Naming scheme for your Minio nodes, default is **minio-storage-node**.
-* `storage_drive_model` - You'll have to know the storage drive model in advance of your deployment so Minio only uses intended drives (mixing drives is not recommened). We're using **HGST_HUS728T8TAL** here since that's the current 8TB drive in the s3.xlarge.x86.
-* `minio_region_name` - Name for your cluster, default is **us-east-1**.
+* `plan` - We're using `s3.xlarge.x86` servers by default.
+* `operating_system` - Though this does work on other Linux distros like CentOS and Debian, this install is verified for Ubuntu 20.04 (`ubuntu_20_04`) since it performs best.
+* `facility` - Where would you like these servers deployed, we're using `dc13`.
+* `cluster_size` - How many servers in the cluster? We default to `4`.
+* `hostname` - Naming scheme for your Minio nodes, default is `minio-storage-node`.
+* `storage_drive_model` - You'll have to know the storage drive model in advance of your deployment so Minio only uses intended drives (mixing drives is not recommened). We're using `HGST_HUS728T8TAL` here since that's the current 8TB drive in the s3.xlarge.x86.
+* `minio_region_name` - Name for your cluster, default is `us-east-1`.
 
 The following are pretty important when setting up your cluster as they define how performant (particularly when using HDDs) and how protected your data is. You should consider how large the files you are storing are, the smaller the file (eg 1MB and lower), it's likely you would use a lower erasure set size to gain more performance, though this consideration is based on the type of disks you are using.
-* `minio_erasure_set_drive_count` - This defines how many drives comprise an erasure set. It should be a multiple of the cluster size. We're going with **8**, which with our default settings means we will have 6 sets of 8 drives.
-* `minio_storage_class_standard` - This defines how many parity drives will be used in an erasure set, we're setting this to **EC:2**. With our default settings, that means for 8 drives in an erasue set, 2 will be dedicated to parity.
+* `minio_erasure_set_drive_count` - This defines how many drives comprise an erasure set. It should be a multiple of the cluster size. We're going with `8`, which with our default settings means we will have 6 sets of 8 drives.
+* `minio_storage_class_standard` - This defines how many parity drives will be used in an erasure set, we're setting this to `EC:2`. With our default settings, that means for 8 drives in an erasue set, 2 will be dedicated to parity so you can lose up to 2 drives without losing any data.
 
 
 For both `minio_erasure_set_drive_count` and `minio_storage_class_standard` you can choose to pass `default`. Default favors resiliency, the erasure set will be calculated such that it's a multiple of the number of servers in a cluster and also that it can't be more than 16. Default parity is n/2, or half the number of drives in an erasure set, meaning 50% of the clusters total storage will be dedicated to parity. Again, these are defintely things you will want to consider for yourself based on business and performance goals, and how reselient you want your cluster to be.
