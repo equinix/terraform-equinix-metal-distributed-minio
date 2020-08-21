@@ -67,7 +67,7 @@ Specifying multiple drives is also an option when you are using the same server 
 DRIVE_MODEL="HGST_HUS728T8TAL\|Micron_5200_MTFD"
 ```
 
-Also, leaving the string empty (DRIVE_MODEL="") will make the script use any drive model. Not recommended.
+Also, leaving the string empty `DRIVE_MODEL=""` will make the script use any drive model. Not recommended.
 
 Or you can contact the support team at support.packet.com.
 
