@@ -106,7 +106,7 @@ You can also use the [Minio Client (MC)](https://docs.min.io/docs/minio-client-q
 mc config host add $ALIAS $MINIO_ENDPOINT $MINIO_ACCESS_KEY $MINIO_SECRET_KEY
 ```
 
-For `$MINIO_ENDPOINT` you can either use the public instance IP or use the localhost address, here's an example:
+Where `$ALIAS` can be any name (we are using `minio` as the alias). For `$MINIO_ENDPOINT` you can either use the public instance IP or use the localhost address. `$MINIO_ACCESS_KEY` and `$MINIO_SECRET_KEY` are given in the terraform output results. Here's an example:
 
 ```
 mc config host add minio http://127.0.0.1:9000 Xe245QheQ7Nwi20dxsuF 9g4LKJlXqpe7Us4MIwTPluNyTUJv4A5T9xVwwcZh
