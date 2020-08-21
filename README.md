@@ -45,7 +45,7 @@ Optional variables are:
 * `facility` - Where would you like these servers deployed, we're using **DC13**.
 * `cluster_size` - How many servers in the cluster? We default to **4**.
 * `hostname` - Naming scheme for your Minio nodes, default is **minio-storage-node**.
-* `storage_drive_model` - You'll have to know the storage drive model in advance of your deployment so Minio only uses intended drives (mixing drives is not recommened). We're using **HGST** here since that's the current 8TB drive in the s3.xlarge.x86.
+* `storage_drive_model` - You'll have to know the storage drive model in advance of your deployment so Minio only uses intended drives (mixing drives is not recommened). We're using **HGST_HUS728T8TAL** here since that's the current 8TB drive in the s3.xlarge.x86.
 * `minio_region_name` - Name for your cluster, default is **us-east-1**.
 
 The following are pretty important when setting up your cluster as they define how performant (particularly when using HDDs) and how protected your data is. You should consider how large the files you are storing are, the smaller the file (eg 1MB and lower), it's likely you would use a lower erasure set size to gain more performance, though this consideration is based on the type of disks you are using.
@@ -100,13 +100,17 @@ minio_region_name = us-east-1
 
 To login and administer your cluster you can navigate to any of the endpoints provided at the end of the Terraform deploy and enter the provided access key and secret.
 
-You can also use the [Minio Client (MC)](https://docs.min.io/docs/minio-client-quickstart-guide.html) which has a ton of functionality. Here is a useful command to get some info on your cluster:
+You can also use the [Minio Client (MC)](https://docs.min.io/docs/minio-client-quickstart-guide.html) which has a ton of functionality. To connect the minio client with any of your hosts, log in to any of the minio nodes through ssh and run the following command which is in the format of `mc config host add $ALIAS $MINIO_ENDPOINT $MINIO_ACCESS_KEY $MINIO_SECRET_KEY`. For `$MINIO_ENDPOINT` you can either use the public instance IP or use the localhost address, here's an example:
+
+`mc config host add minio http://127.0.0.1:9000 Xe245QheQ7Nwi20dxsuF 9g4LKJlXqpe7Us4MIwTPluNyTUJv4A5T9xVwwcZh`
+
+Here is a useful command to get some info on your cluster:
 
 ```
 mc admin info minio --json | jq .info.backend
 ```
 
-Which will get you something like this:
+Which will get you info about the Erasure Coding configuration used in both the standard and reduced redundancy Minio storage classes:
 
 ```
 root@minio-storage-node1:~# mc admin info minio --json | jq .info.backend
