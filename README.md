@@ -4,6 +4,10 @@
 
 This repository is [Maintained](https://github.com/packethost/standards/blob/master/maintained-statement.md) meaning that this software is supported by Packet and its community - available to use in production environments.
 
+If you require support, please email [support@packet.com](support@packet.com), visit the Packet IRC channel (#packethost on freenode), subscribe to the [Packet Community Slack](https://slack.packet.com/) channel or post an issue within this repository.
+
+[Contributions](https://github.com/packet-labs/terraform-packet-distributed-minio/blob/master/CONTRIBUTING.md) are welcome to help extend this work!
+
 # Minio Distributed on Packet with Terraform
 packet-distributed-minio is a [Terraform](http://terraform.io) template that will deploy [Minio](http://min.io) distributed on [Packet](http://packet.com) baremetal. MinIO is a high performance object storage server compatible with Amazon S3. Minio is a great option for Packet users that want to have easily accessible S3 compatible object storage as Packet offers instance types with storage options including SATA SSDs, NVMe SSDs, and high capacity SATA HDDs.
 
