@@ -8,12 +8,6 @@ variable "project_id" {
     type = string
 }
 
-variable "ssh_private_key_path" {
-    description = "Where your private ssh key for accessing Packet servers is located."
-    type = string
-}
-
-
 variable "facility" {
     description = "Your storage clusters location."
     default = "dc13"
@@ -40,6 +34,16 @@ variable "cluster_size" {
 variable "hostname" {
     description = "Naming scheme for Minio nodes."
     default = "minio-storage-node"
+}
+
+variable "port" {
+  description = "Port minio will listen on"
+  default = 9000
+}
+
+variable "public" {
+  description = "Listen on public IPv4"
+  default = true
 }
 
 variable "storage_drive_model" {

@@ -1,5 +1,5 @@
 output "minio_endpoints" {
-    value = formatlist("%s minio endpoint is http://%s:9000", packet_device.minio-distributed-cluster[*].hostname, packet_device.minio-distributed-cluster[*].access_public_ipv4)
+    value = formatlist("%s minio endpoint is %s", packet_device.minio-distributed-cluster[*].hostname, data.template_file.endpoint[*].rendered)
 }
 
 output "minio_access_key"{
