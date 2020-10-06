@@ -11,17 +11,11 @@ If you require support, please email [support@packet.com](support@packet.com), v
 # Minio Distributed on Packet with Terraform
 packet-distributed-minio is a [Terraform](http://terraform.io) template that will deploy [Minio](http://min.io) distributed on [Packet](http://packet.com) baremetal. MinIO is a high performance object storage server compatible with Amazon S3. Minio is a great option for Packet users that want to have easily accessible S3 compatible object storage as Packet offers instance types with storage options including SATA SSDs, NVMe SSDs, and high capacity SATA HDDs.
 
-## Install Terraform 
-Terraform is just a single binary.  Visit their [download page](https://www.terraform.io/downloads.html), choose your operating system, make the binary executable, and move it into your path. 
- 
-Here is an example for **macOS**: 
-```bash 
-curl -LO https://releases.hashicorp.com/terraform/0.12.25/terraform_0.12.25_darwin_amd64.zip 
-unzip terraform_0.12.25_darwin_amd64.zip
-chmod +x terraform 
-sudo mv terraform /usr/local/bin/ 
-``` 
- 
+## Install Terraform
+Terraform is just a single binary.  Visit their [download page](https://www.terraform.io/downloads.html), choose your operating system, make the binary executable, and move it into your path.
+
+This repository currently supports Terraform v0.13 or higher.
+
 ## Download this project
 To download this project, run the following command:
 
@@ -30,10 +24,10 @@ git clone https://github.com/enkelprifti98/terraform-packet-distributed-minio.gi
 cd packet-distributed-minio
 ```
 
-## Initialize Terraform 
-Terraform uses modules to deploy infrastructure. In order to initialize the modules your simply run: `terraform init`. This should download modules into a hidden directory `.terraform` 
- 
-## Modify your variables 
+## Initialize Terraform
+Terraform uses modules to deploy infrastructure. In order to initialize the modules your simply run: `terraform init`. This should download modules into a hidden directory `.terraform`
+
+## Modify your variables
 We've added .tfvars to the .gitignore file but you can copy the template with:
 
 `cp vars.template terraform.tfvars`
@@ -42,7 +36,6 @@ In the `terraform.tfvars` file you will need to modify the following variables:
 
 * `auth_token` - This is your Packet API Key.
 * `project_id` - This is your Packet Project ID.
-* `ssh_private_key_path` - Path to your private SSH key for accessing servers you deploy on Packet.
 
 [Learn about Packet API Keys and Project IDs](https://www.packet.com/developers/docs/API/)
 
@@ -55,6 +48,8 @@ Optional variables are:
 * `hostname` - Naming scheme for your Minio nodes, default is `minio-storage-node`.
 * `storage_drive_model` - You'll have to know the storage drive model in advance of your deployment so Minio only uses intended drives (mixing drives is not recommened). We're using `HGST_HUS728T8TAL` here since that's the current 8TB drive in the s3.xlarge.x86.
 * `minio_region_name` - Name for your cluster, default is `us-east-1`.
+* `port` - port on which to listen, default is the minio standard of `9000`
+* `public` - whether to listen on all IP addresses (including public and localhost), or just the single private IP, default is `true`
 
 The following are pretty important when setting up your cluster as they define how performant (particularly when using HDDs) and how protected your data is. You should consider how large the files you are storing are, the smaller the file (eg 1MB and lower), it's likely you would use a lower erasure set size to gain more performance, though this consideration is based on the type of disks you are using.
 * `minio_erasure_set_drive_count` - This defines how many drives comprise an erasure set. It should be a multiple of the cluster size. We're going with `8`, which with our default settings means we will have 6 sets of 8 drives.
