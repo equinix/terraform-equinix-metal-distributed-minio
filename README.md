@@ -4,7 +4,7 @@
 
 This repository is [Maintained](https://github.com/packethost/standards/blob/master/maintained-statement.md) meaning that this software is supported by Packet and its community - available to use in production environments.
 
-If you require support, please email [support@packet.com](support@packet.com), visit the Packet IRC channel (#packethost on freenode), subscribe to the [Packet Community Slack](https://slack.packet.com/) channel or post an issue within this repository.
+If you require support, please email [support@packet.com](support@packet.com), visit the Packet IRC channel (#equinixmetal on freenode), subscribe to the [Packet Community Slack](https://slack.packet.com/) channel or post an issue within this repository.
 
 [Contributions](https://github.com/packet-labs/terraform-packet-distributed-minio/blob/master/CONTRIBUTING.md) are welcome to help extend this work!
 
