@@ -1,15 +1,15 @@
-# terraform-packet-distributed-minio
+# Equinix Metal - Distributed MinIO with Terraform
 
 ![](https://img.shields.io/badge/Stability-Maintained-green.svg)
 
-This repository is [Maintained](https://github.com/packethost/standards/blob/master/maintained-statement.md) meaning that this software is supported by Packet and its community - available to use in production environments.
+This repository is [Maintained](https://github.com/packethost/standards/blob/master/maintained-statement.md) meaning that this software is supported by Equinix Metal and its community - available to use in production environments.
 
-If you require support, please email [support@packet.com](support@packet.com), visit the Packet IRC channel (#equinixmetal on freenode), subscribe to the [Packet Community Slack](https://slack.packet.com/) channel or post an issue within this repository.
+If you require support, please email [support@equinixmetal.com](support@equinixmetal.com), visit the Equinix Metal IRC channel (#equinixmetal on freenode), subscribe to the [Equinix Metal Community Slack](https://equinixmetal.slack.com/) channel or post an issue within this repository.
 
 [Contributions](https://github.com/packet-labs/terraform-packet-distributed-minio/blob/master/CONTRIBUTING.md) are welcome to help extend this work!
 
-# Minio Distributed on Packet with Terraform
-packet-distributed-minio is a [Terraform](http://terraform.io) template that will deploy [Minio](http://min.io) distributed on [Packet](http://packet.com) baremetal. MinIO is a high performance object storage server compatible with Amazon S3. Minio is a great option for Packet users that want to have easily accessible S3 compatible object storage as Packet offers instance types with storage options including SATA SSDs, NVMe SSDs, and high capacity SATA HDDs.
+# Minio Distributed on Equinix Metal with Terraform
+Minio Distributed on Equinix Metal with Terraform is a [Terraform](http://terraform.io) template that will deploy [Minio](http://min.io) distributed on [Equinix Metal](https://metal.equinix.com/) baremetal. MinIO is a high performance object storage server compatible with Amazon S3. Minio is a great option for Equinix Metal users that want to have easily accessible S3 compatible object storage as Equinix Metal offers instance types with storage options including SATA SSDs, NVMe SSDs, and high capacity SATA HDDs.
 
 ## Install Terraform
 Terraform is just a single binary.  Visit their [download page](https://www.terraform.io/downloads.html), choose your operating system, make the binary executable, and move it into your path.
@@ -20,8 +20,7 @@ This repository currently supports Terraform v0.13 or higher.
 To download this project, run the following command:
 
 ```bash
-git clone https://github.com/enkelprifti98/terraform-packet-distributed-minio.git
-cd packet-distributed-minio
+git clone https://github.com/packet-labs/terraform-packet-distributed-minio.git
 ```
 
 ## Initialize Terraform
@@ -34,10 +33,10 @@ We've added .tfvars to the .gitignore file but you can copy the template with:
 
 In the `terraform.tfvars` file you will need to modify the following variables:
 
-* `auth_token` - This is your Packet API Key.
-* `project_id` - This is your Packet Project ID.
+* `auth_token` - This is your Equinix Metal API Key.
+* `project_id` - This is your Equinix Metal Project ID.
 
-[Learn about Packet API Keys and Project IDs](https://www.packet.com/developers/docs/API/)
+[Learn about Equinix Metal API Keys and Project IDs](https://metal.equinix.com/developers/api/)
 
 Optional variables are:
 
@@ -58,7 +57,7 @@ The following are pretty important when setting up your cluster as they define h
 
 For both `minio_erasure_set_drive_count` and `minio_storage_class_standard` you can choose to pass `default`. Default favors resiliency, the erasure set will be calculated such that it's a multiple of the number of servers in a cluster and also that it can't be more than 16. Default parity is n/2, or half the number of drives in an erasure set, meaning 50% of the clusters total storage will be dedicated to parity. Again, these are defintely things you will want to consider for yourself based on business and performance goals, and how reselient you want your cluster to be.
 
-To learn what storage drive model a given Packet server instance is using, you can deploy said instance with a Linux distribution such as Ubuntu, Debian, or CentOS and run:
+To learn what storage drive model a given Equinix Metal server instance is using, you can deploy said instance with a Linux distribution such as Ubuntu, Debian, or CentOS and run:
 
 ```
 lsblk -d -o name,size,model,rota
@@ -72,9 +71,9 @@ DRIVE_MODEL="HGST_HUS728T8TAL\|Micron_5200_MTFD"
 
 Also, leaving the string empty `DRIVE_MODEL=""` will make the script use any drive model. Not recommended.
 
-Or you can contact the support team at support.packet.com.
+Or you can contact the support team at support@equinixmetal.com.
 
-To view all available plans, facilities, and operating_systems - you can use our [Packet CLI](https://github.com/packethost/packet-cli) or make a call to the respective API endpoints directly. [API Docs](https://www.packet.com/developers/api/).
+To view all available plans, facilities, and operating_systems - you can use our [CLI](https://github.com/packethost/packet-cli) or make a call to the respective API endpoints directly. [API Docs](https://www.packet.com/developers/api/).
 
 If you wish to modify the filesystem to be used along with the parent path of the directories where the drives will be mounted, you can do so in the `user_data.sh` bash script in the /templates folder in this repository. The relevant bash variables are `DATA_BASE` for the parent directory path and `FILESYSTEM_TYPE` for the filesystem you wish to use.
 
@@ -172,4 +171,4 @@ We're using the AWS Terraform Provider here since Minio is an S3 compliant stora
 
 ## Load Balancing your Minio cluster
 
-It is recommended to load balance the traffic to your minion server endpoints through a single endpoint. This can be done through a DNS record that points to your minio servers or you could even utilize a Packet Elastic IP and announce it through BGP on all the minio servers to achieve ECMP load balancing.
+It is recommended to load balance the traffic to your minion server endpoints through a single endpoint. This can be done through a DNS record that points to your minio servers or you could even utilize a Equinix Metal Elastic IP and announce it through BGP on all the minio servers to achieve ECMP load balancing.
