@@ -279,7 +279,7 @@ LISTEN_IP=
 # if not public, grab the private IP only
 # THIS IS NOT YET SUPPORTED
 #if [ -z "$PUBLIC" ]; then
-#  LISTEN_IP=$(curl https://metadata.packet.net/metadata | jq -r '.network.addresses[] | select(.address_family == 4 and .public == true) | .address')
+#  LISTEN_IP=$(curl https://metadata.platformequinix.com/metadata | jq -r '.network.addresses[] | select(.address_family == 4 and .public == true) | .address')
 #fi
 
 root_disk=`df -h | sort -k 6 | head -1 | cut -c1-8`

@@ -1,4 +1,4 @@
-provider "packet" {
+provider "metal" {
     auth_token = var.auth_token
 }
 
@@ -18,7 +18,7 @@ resource "random_string" "minio_secret_key" {
     special = false
 }
 
-resource "packet_reserved_ip_block" "elastic_addresses" {
+resource "metal_reserved_ip_block" "elastic_addresses" {
   project_id = var.project_id
   facility   = var.facility
   quantity   = var.cluster_size
@@ -46,7 +46,7 @@ data "local_file" "foo" {
     filename = "${path.module}/assets/user_data.sh"
 }
 
-resource "packet_device" "minio-distributed-cluster" {
+resource "metal_device" "minio-distributed-cluster" {
     count = var.cluster_size
     project_id = var.project_id
     hostname = format("%s%d",var.hostname, count.index+1)
@@ -57,10 +57,10 @@ resource "packet_device" "minio-distributed-cluster" {
     user_data = replace(data.local_file.foo.content, "__ENVSET__", element(data.template_file.user_data_env.*.rendered, count.index))
 }
 
-resource "packet_ip_attachment" "eip_assignment" {
+resource "metal_ip_attachment" "eip_assignment" {
   count = var.cluster_size
-  device_id = element(packet_device.minio-distributed-cluster.*.id, count.index)
-  cidr_notation = join("/", [cidrhost(packet_reserved_ip_block.elastic_addresses.cidr_notation, count.index), "32"])
+  device_id = element(metal_device.minio-distributed-cluster.*.id, count.index)
+  cidr_notation = join("/", [cidrhost(metal_reserved_ip_block.elastic_addresses.cidr_notation, count.index), "32"])
 }
 
 
@@ -69,7 +69,7 @@ data template_file "ipaddr" {
   count = var.cluster_size
   template = "$${ip}"
   vars = {
-    ip = cidrhost(packet_reserved_ip_block.elastic_addresses.cidr_notation, count.index)
+    ip = cidrhost(metal_reserved_ip_block.elastic_addresses.cidr_notation, count.index)
   }
 }
 
@@ -89,7 +89,7 @@ resource "null_resource" "await_minio_ready" {
 
   # Changes to any instance of the cluster requires re-provisioning
   triggers = {
-    cluster_instance_ids = join(",", packet_device.minio-distributed-cluster.*.id)
+    cluster_instance_ids = join(",", metal_device.minio-distributed-cluster.*.id)
   }
   provisioner "local-exec" {
     // we retry every 5 seconds, or 12 times per minute, over 5 minutes, for 60 retries

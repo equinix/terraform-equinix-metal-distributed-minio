@@ -1,10 +1,10 @@
 variable "auth_token" {
-    description = "Packet API Key"
+    description = "Equinix Metal API Key"
     type = string
 }
 
 variable "project_id" {
-    description = "Packet Project ID"
+    description = "Equinix Metal Project ID"
     type = string
 }
 
