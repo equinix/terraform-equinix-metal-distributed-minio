@@ -2,11 +2,11 @@
 
 ![](https://img.shields.io/badge/Stability-Maintained-green.svg)
 
-This repository is [Maintained](https://github.com/packethost/standards/blob/master/maintained-statement.md) meaning that this software is supported by Equinix Metal and its community - available to use in production environments.
+This repository is [Maintained](https://github.com/packethost/standards/blob/main/maintained-statement.md) meaning that this software is supported by Equinix Metal and its community - available to use in production environments.
 
 If you require support, please email [support@equinixmetal.com](support@equinixmetal.com), visit the Equinix Metal IRC channel (#equinixmetal on freenode), subscribe to the [Equinix Metal Community Slack](https://equinixmetal.slack.com/) channel or post an issue within this repository.
 
-[Contributions](https://github.com/equinix/terraform-metal-distributed-minio/blob/master/CONTRIBUTING.md) are welcome to help extend this work!
+[Contributions](https://github.com/equinix/terraform-metal-distributed-minio/blob/main/CONTRIBUTING.md) are welcome to help extend this work!
 
 # Minio Distributed on Equinix Metal with Terraform
 Minio Distributed on Equinix Metal with Terraform is a [Terraform](http://terraform.io) template that will deploy [Minio](http://min.io) distributed on [Equinix Metal](https://metal.equinix.com/) baremetal. MinIO is a high performance object storage server compatible with Amazon S3. Minio is a great option for Equinix Metal users that want to have easily accessible S3 compatible object storage as Equinix Metal offers instance types with storage options including SATA SSDs, NVMe SSDs, and high capacity SATA HDDs.
