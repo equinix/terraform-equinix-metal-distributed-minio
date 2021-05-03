@@ -4,4 +4,4 @@ This project is governed by [Equinix Metal](https://metal.equinix.com) and benef
 
 Members of the Equinix Github organization will strive to triage issues in a timely manner, see [SUPPORT.md](SUPPORT.md) for details.
 
-See the [packethost/standards glossary](https://github.com/packethost/standards/blob/master/glossary.md#ownersmd) for more details about this file.
+See the [packethost/standards glossary](https://github.com/packethost/standards/blob/main/glossary.md#ownersmd) for more details about this file.
